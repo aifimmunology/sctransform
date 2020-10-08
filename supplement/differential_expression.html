@@ -11,7 +11,7 @@
 
 <meta name="author" content="Christoph Hafemeister" />
 
-<meta name="date" content="2020-09-18" />
+<meta name="date" content="2020-10-08" />
 
 <title>Differential Expression</title>
 
@@ -452,7 +452,7 @@ summary {
 
 <h1 class="title toc-ignore">Differential Expression</h1>
 <h4 class="author">Christoph Hafemeister</h4>
-<h4 class="date">2020-09-18</h4>
+<h4 class="date">2020-10-08</h4>
 
 </div>
 
@@ -483,7 +483,7 @@ summary {
 <span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; Found 154 outliers - those will be ignored in fitting/regularization step</span></span>
 <span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; Second step: Get residuals using fitted parameters for 12519 genes</span></span>
 <span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; Calculating gene attributes</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; Wall clock passed: Time difference of 26.91129 secs</span></span></code></pre></div>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; Wall clock passed: Time difference of 15.94675 secs</span></span></code></pre></div>
 <p>Perform differential expression test between the two monocyte clusters.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>res1 &lt;-<span class="st"> </span>sctransform<span class="op">:::</span><span class="kw">compare_expression</span>(<span class="dt">x =</span> vst_out, <span class="dt">umi =</span> pbmc_data, <span class="dt">group =</span> pbmc_clusters, </span>
 <span id="cb3-2"><a href="#cb3-2"></a>    <span class="dt">val1 =</span> <span class="st">&quot;CD14+ Monocytes&quot;</span>, <span class="dt">val2 =</span> <span class="st">&quot;FCGR3A+ Monocytes&quot;</span>, <span class="dt">verbosity =</span> <span class="dv">1</span>)</span>
@@ -837,7 +837,7 @@ summary {
 <tr class="even">
 <td align="left">MALAT1</td>
 <td align="right">0</td>
-<td align="right">0.5285738</td>
+<td align="right">0.5285737</td>
 <td align="right">0</td>
 <td align="right">58.5094421</td>
 <td align="right">71.5909091</td>
