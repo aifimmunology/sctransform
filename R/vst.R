@@ -401,7 +401,23 @@ get_model_pars <- function(genes_step1, bin_size, umi, model_str, cells_step1,
   model_pars <- list()
   for (i in 1:max_bin) {
     genes_bin_regress <- genes_step1[bin_ind == i]
-    umi_bin <- as.matrix(umi[genes_bin_regress, cells_step1, drop=FALSE])
+    
+    #LG# retain sparsity
+    if(method == "glmGamPoi") {
+      umi_bin <- umi[genes_bin_regress, cells_step1, drop=FALSE]
+    } else {
+      umi_bin <- Matrix::t(umi[genes_bin_regress, cells_step1, drop=FALSE])
+      umi_bin <- list(i = split(umi_bin@i, rep(1:ncol(umi_bin), diff(umi_bin@p))),
+                      x = split(umi_bin@x, rep(1:ncol(umi_bin), diff(umi_bin@p))))
+      umi_bin <- lapply(1:length(umi_bin$i),
+                        function(j) {
+                          # + 1 due to zero-indexing in sparse matrix
+                          list(i = umi_bin$i[[j]] + 1,
+                               x = umi_bin$x[[j]])
+                        })
+      names(umi_bin) <- genes_bin_regress
+    }
+    
     if (!is.null(theta_given)) {
       theta_given_bin <- theta_given[genes_bin_regress]
     }
@@ -413,15 +429,20 @@ get_model_pars <- function(genes_step1, bin_size, umi, model_str, cells_step1,
     if (future::supportsMulticore()) {
       n_workers <- future::nbrOfWorkers()
     }
-    genes_per_worker <- nrow(umi_bin) / n_workers + .Machine$double.eps
-    index_vec <- 1:nrow(umi_bin)
+    genes_per_worker <- length(genes_bin_regress) / n_workers + .Machine$double.eps
+    index_vec <- 1:length(genes_bin_regress)
     index_lst <- split(index_vec, ceiling(index_vec/genes_per_worker))
 
     # the index list will have at most n_workers entries, each one defining which genes to work on
     par_lst <- future_lapply(
       X = index_lst,
       FUN = function(indices) {
-        umi_bin_worker <- umi_bin[indices, , drop = FALSE]
+        if(method == "glmGamPoi") {
+          umi_bin_worker <- umi_bin[indices,]
+        } else {
+          umi_bin_worker <- umi_bin[indices]
+        }
+        
         if (method == 'poisson') {
           return(fit_poisson(umi = umi_bin_worker, model_str = model_str, data = data_step1, theta_estimation_fun = theta_estimation_fun))
         }
